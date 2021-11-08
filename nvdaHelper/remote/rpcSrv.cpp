@@ -20,6 +20,7 @@ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #include <remote/nvdaControllerInternal.h>
 #include <common/log.h>
 #include <remote/vbufRemote.h>
+
 #ifndef _M_ARM64
 	#include <remote/displayModelRemote.h>
 #endif //_M_ARM64
