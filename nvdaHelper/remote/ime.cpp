@@ -108,7 +108,7 @@ DWORD getIMEVersion(HKL kbd_layout, wchar_t* filename) {
 			// Do not know how to extract version number
 			return 0;
 	}
-	DWORD ver_handle;
+	DWORD ver_handle = 0;
 	DWORD buf_size = GetFileVersionInfoSizeW(filename, &ver_handle);
 	if (!buf_size)  return 0;
 	void* buf = malloc(buf_size);
