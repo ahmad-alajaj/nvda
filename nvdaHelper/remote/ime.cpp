@@ -113,7 +113,7 @@ DWORD getIMEVersion(HKL kbd_layout, wchar_t* filename) {
 	if (!buf_size)  return 0;
 	void* buf = malloc(buf_size);
     if (!buf)  return 0;
-	if (GetFileVersionInfoW(filename, ver_handle, buf_size, buf)) {
+	if (GetFileVersionInfoW(filename, /*ver_handle*/0, buf_size, buf)) {
 		void* data = NULL;
 		UINT  data_len;
 		if (VerQueryValueW(buf, L"\\", &data, &data_len)) {
