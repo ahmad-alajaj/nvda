@@ -90,9 +90,9 @@ template<typename toInterface> inline HRESULT queryService(IUnknown* pUnknown, c
 	}
 	hRes=pServProv->QueryService(siid,__uuidof(toInterface),(void**)pIface);
 	pServProv->Release();
-	if(hRes!=S_OK||!pIface) {
+	if(hRes!=S_OK) {
 		LOG_DEBUG(L"Could not get requested interface");
-		*pIface=NULL;
+		*pIface = nullptr;
 		return hRes;
 	}
 	return hRes;
