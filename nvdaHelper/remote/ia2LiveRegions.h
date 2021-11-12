@@ -11,11 +11,22 @@ Copyright 2006-2010 NVDA contributers.
 This license can be found at:
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 */
+#include <string>
 
 #ifndef IA2LIVEREGIONS_H
 #define IA2LIVEREGIONS_H
 
+struct IAccessible2;
+
 void ia2LiveRegions_inProcess_initialize();
 void ia2LiveRegions_inProcess_terminate();
 
-#endif
+bool getTextFromIAccessible(
+    std::wstring& textBuf,
+    IAccessible2* pacc2,
+    bool useNewText = false,
+    bool recurse = true,
+    bool includeTopLevelText = true
+);
+
+#endif  // IA2LIVEREGIONS_H
