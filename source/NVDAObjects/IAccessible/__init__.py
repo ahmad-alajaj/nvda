@@ -1659,6 +1659,34 @@ the NVDAObject for IAccessible
 		except COMError:
 			return False
 
+	def summarizeInProcess(self) -> str:
+		from comtypes import BSTR
+		import ctypes
+		import NVDAHelper
+		text = BSTR()
+		log.debug("Calling nvdaInProcUtils_getTextFromIAccessible")
+		res = NVDAHelper.localLib.nvdaInProcUtils_getTextFromIAccessible(
+			# [in] handle_t bindingHandle
+			self.appModule.helperLocalBindingHandle,
+			# [in] const unsigned long hwnd
+			self.windowHandle,
+			# [in] long parentID
+			self.IAccessibleObject.uniqueID,
+			# // Params for getTextFromIAccessible
+			# [out, string] BSTR* textBuf
+			ctypes.byref(text),
+			# [in, defaultvalue(FALSE)] const boolean useNewText,
+			False,
+			# [in, defaultvalue(TRUE)] const boolean recurse,
+			True,
+			# [in, defaultvalue(TRUE)] const boolean includeTopLevelText
+			True,
+		)
+		if res != 0:
+			log.error("Error")
+			raise ctypes.WinError(res)
+		return text.value
+
 class ContentGenericClient(IAccessible):
 
 	TextInfo=displayModel.DisplayModelTextInfo

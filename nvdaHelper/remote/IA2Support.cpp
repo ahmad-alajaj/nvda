@@ -312,6 +312,8 @@ error_status_t nvdaInProcUtils_getTextFromIAccessible(
 	const boolean recurse,
 	const boolean includeTopLevelText
 ) {
+	LOG_INFO(L"Called nvdaInProcUtils_getTextFromIAccessible");
+	LOG_INFO(L"outBuf address : " << outBuf << std::endl);
 	if (outBuf == nullptr) {
 		LOG_ERROR(L"outBuff is null.");
 		return 0;

@@ -1874,6 +1874,24 @@ class GlobalCommands(ScriptableObject):
 			self.script_showFormattingAtCaret(gesture)
 
 	@script(
+		description=_(
+			# Translators: the description for the activateAriaDetailsSummary script on browseMode documents.
+			"Shows a summary of the details at this position if found."
+		)
+	)
+	def script_reportSummary(self, gesture):
+		log.debug("report Summary of the current object")
+		from NVDAObjects import IAccessible
+		import typing
+		nav = api.getNavigatorObject()
+		if not isinstance(nav, IAccessible.IAccessible):
+			ui.message("not an IAccessible")
+		obj = typing.cast(IAccessible.IAccessible, nav)
+		text = obj.summarizeInProcess()
+		ui.message(text)
+
+
+	@script(
 		# Translators: Input help mode message for report current focus command.
 		description=_("Reports the object with focus. If pressed twice, spells the information"),
 		category=SCRCAT_FOCUS,
