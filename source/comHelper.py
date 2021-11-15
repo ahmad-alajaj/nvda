@@ -10,7 +10,10 @@
 import subprocess
 import ctypes
 import comtypes.client.dynamic
-from comtypes import IUnknown
+from comtypes import (
+	IUnknown,
+	BSTR,
+)
 from comtypes.automation import IDispatch
 import oleacc
 import config
@@ -66,3 +69,17 @@ def getActiveObject(progid, dynamic=False,appModule=None):
 		p.stdin.close()
 		p.wait()
 		p.stdout.close()
+
+
+class AutoFreeBSTR(BSTR):
+	"""A BSTR that *always* frees itself on deletion.
+	A BSTR (Basic string or binary string) is a string data type that is used by COM,
+	Automation, and Interop functions.
+
+	AutoFreeBSTR is useful where another library allocates (SysAllocString/SysAllocStringLen)
+	and you want to ensure that it will be deallocated (SysFreeString).
+	@note This should used WHEN??? Normally, the BSTR (base class) from comtypes will free the string when it
+		is from an outparam (indicating that memory was allocated in the library).
+	@warning Don't use this unless you are certain about taking ownership of the memory.
+	"""
+	_needsfree=True
