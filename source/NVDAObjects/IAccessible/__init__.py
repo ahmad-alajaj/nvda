@@ -1433,7 +1433,10 @@ the NVDAObject for IAccessible
 				pass
 		raise NotImplementedError
 
-	def _get__IA2Relations(self):
+	#: Type definition for auto prop '_get__IA2Relations'
+	_IA2Relations: typing.List[IA2.IAccessibleRelation]
+
+	def _get__IA2Relations(self) -> typing.List[IA2.IAccessibleRelation]:
 		if not isinstance(self.IAccessibleObject, IA2.IAccessible2):
 			raise NotImplementedError
 		import ctypes
@@ -1443,7 +1446,7 @@ the NVDAObject for IAccessible
 		except COMError:
 			raise NotImplementedError
 		if size <= 0:
-			return ()
+			return list()
 		relations = (ctypes.POINTER(IA2.IAccessibleRelation) * size)()
 		count = ctypes.c_int()
 		# The client allocated relations array is an [out] parameter instead of [in, out], so we need to use the raw COM method.
@@ -1452,13 +1455,20 @@ the NVDAObject for IAccessible
 			raise NotImplementedError
 		return list(relations)
 
-	def _getIA2RelationFirstTarget(self, relationType):
-		# we can probably use element->get_relationTargetsOfType rather than _get__IA2Relations (which uses https://accessibility.linuxfoundation.org/a11yspecs/ia2/docs/html/interface_i_accessible2.html#a967f0dffba760744b5963f42bb7be8ed)
-		# see https://accessibility.linuxfoundation.org/a11yspecs/ia2/docs/html/interface_i_accessible2__2.html#a63f214b322c663caf01d4bb67277f5af
+	def _getIA2RelationFirstTarget(
+			self,
+			relationType:typing.Union[str, "IAccessibleHandler.RelationType"]
+	) -> typing.Optional["IAccessible"]:
+		if isinstance(relationType, IAccessibleHandler.RelationType):
+			relationType = relationType.value
+
 		for relation in self._IA2Relations:
 			try:
 				if relation.relationType == relationType:
-					return IAccessible(IAccessibleObject=IAccessibleHandler.normalizeIAccessible(relation.target(0)), IAccessibleChildID=0)
+					return IAccessible(
+						IAccessibleObject=IAccessibleHandler.normalizeIAccessible(relation.target(0)),
+						IAccessibleChildID=0
+					)
 			except COMError:
 				pass
 		return None
