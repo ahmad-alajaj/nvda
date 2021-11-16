@@ -13,7 +13,7 @@ import NVDAObjects.behaviors
 import winUser
 import mouseHandler
 import IAccessibleHandler
-from IAccessibleHandler import IA2_RELATION_CONTAINING_DOCUMENT
+
 import oleacc
 from logHandler import log
 import textInfos
@@ -190,7 +190,10 @@ class Gecko_ia2(VirtualBuffer):
 				# IAccessible NVDAObjects currently fetch IA2, but we need IA2_2 for relationTargetsOfType.
 				# (Out-of-process, for a single relation, this is cheaper than IA2::relations.)
 				acc = acc.QueryInterface(IA2.IAccessible2_2)
-			targets, count = acc.relationTargetsOfType(IA2_RELATION_CONTAINING_DOCUMENT, 1)
+			targets, count = acc.relationTargetsOfType(
+				IAccessibleHandler.RelationType.CONTAINING_DOCUMENT,
+				1  # max relations to fetch
+			)
 			if count == 0:
 				return None
 			doc = targets[0].QueryInterface(IA2.IAccessible2_2)

@@ -2,9 +2,10 @@
 # Copyright (C) 2006-2021 NV Access Limited, Łukasz Golonka, Leonard de Ruijter
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
-
+from .types import RelationType
 import re
 import struct
+import typing
 from typing import Optional, Tuple
 import weakref
 from ctypes import (
@@ -52,12 +53,6 @@ NAVRELATION_LABELLED_BY = 0x1003
 NAVRELATION_NODE_CHILD_OF = 0x1005
 NAVRELATION_EMBEDS = 0x1009
 
-# IAccessible2 relations (not included in the typelib)
-IA2_RELATION_FLOWS_FROM = "flowsFrom"
-IA2_RELATION_FLOWS_TO = "flowsTo"
-IA2_RELATION_CONTAINING_DOCUMENT = "containingDocument"
-IA2_RELATION_DETAILS = "details"
-IA2_RELATION_DETAILS_FOR = "detailsFor"
 
 # A place to store live IAccessible NVDAObjects, that can be looked up by their window,objectID,
 # childID event params.
