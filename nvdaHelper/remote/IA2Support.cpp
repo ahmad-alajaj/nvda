@@ -312,8 +312,7 @@ error_status_t nvdaInProcUtils_getTextFromIAccessible(
 	const boolean recurse,
 	const boolean includeTopLevelText
 ) {
-	LOG_INFO(L"Called nvdaInProcUtils_getTextFromIAccessible");
-	LOG_INFO(L"outBuf address : " << outBuf << std::endl);
+	LOG_DEBUG(L"Called nvdaInProcUtils_getTextFromIAccessible");
 	if (outBuf == nullptr) {
 		LOG_ERROR(L"outBuff is null.");
 		return 0;
@@ -325,17 +324,29 @@ error_status_t nvdaInProcUtils_getTextFromIAccessible(
 			return;
 		}
 		wstring textBuf;
-		getTextFromIAccessible(textBuf, pacc2, useNewText, recurse, includeTopLevelText);
-		if (!textBuf.empty()) {
-			auto copySize = size_t(std::numeric_limits<UINT>::max);
-			if (copySize < textBuf.size()) {
-				LOG_ERROR(L"Size of buffer larger than can be allocated with SysAllocStringLen, buffer will be truncated.");
-			}
-			else {
-				copySize = textBuf.size();
-			}
-			*outBuf = SysAllocStringLen(textBuf.data(), UINT(copySize));
+		const auto gotText = getTextFromIAccessible(
+			textBuf,
+			pacc2,
+			useNewText,
+			recurse,
+			includeTopLevelText
+		);
+		if (!gotText) {
+			LOG_DEBUGWARNING(L"Unable to get text.");
+			return;
 		}
+		if (textBuf.empty()) {
+			LOG_DEBUGWARNING(L"textBuf empty.");
+			return;
+		}
+		auto copySize = size_t(std::numeric_limits<UINT>::max);
+		if (copySize < textBuf.size()) {
+			LOG_ERROR(L"Size of buffer larger than can be allocated with SysAllocStringLen, buffer will be truncated.");
+		}
+		else {
+			copySize = textBuf.size();
+		}
+		*outBuf = SysAllocStringLen(textBuf.data(), UINT(copySize));
 		return;
 	};
 
