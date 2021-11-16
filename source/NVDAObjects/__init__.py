@@ -483,10 +483,10 @@ class NVDAObject(documentBase.TextContainerObject, baseObject.ScriptableObject, 
 		return controlTypes.DescriptionFrom.UNKNOWN
 
 	#: Typing information for auto property _get_detailsSummary
-	detailsSummary: str
+	detailsSummary: typing.Optional[str]
 
-	def _get_detailsSummary(self) -> str:
-		return ""
+	def _get_detailsSummary(self) -> typing.Optional[str]:
+		return None
 
 	@property
 	def hasDetails(self) -> bool:

@@ -7,6 +7,7 @@
 # Julien Cochuyt, Jakub Lukowicz
 
 import itertools
+import typing
 from typing import Optional
 
 import audioDucking
@@ -44,6 +45,9 @@ import core
 import winVersion
 from base64 import b16encode
 import vision
+
+if typing.TYPE_CHECKING:
+	from NVDAObjects import IAccessible
 
 #: Script category for text review commands.
 # Translators: The name of a category of NVDA commands.
@@ -1875,20 +1879,66 @@ class GlobalCommands(ScriptableObject):
 
 	@script(
 		description=_(
-			# Translators: the description for the activateAriaDetailsSummary script on browseMode documents.
-			"Shows a summary of the details at this position if found."
+			# Translators: the description for the reportSummary script.
+			"Report summary of the current navigator position."
 		)
 	)
 	def script_reportSummary(self, gesture):
-		log.debug("report Summary of the current object")
+		log.debug("Report summary of the current nav object")
 		from NVDAObjects import IAccessible
 		import typing
 		nav = api.getNavigatorObject()
 		if not isinstance(nav, IAccessible.IAccessible):
-			ui.message("not an IAccessible")
+			# Translators: message given when the reportSummary script is not available.
+			ui.message(_("Not available here"))
 		obj = typing.cast(IAccessible.IAccessible, nav)
 		text = obj.summarizeInProcess()
 		ui.message(text)
+
+	@script(
+		description=_(
+			# Translators: the description for the reportAnnotationSummary script.
+			"Report summary of any annotation for this navigator position."
+		)
+	)
+
+
+	def _recursiveSearchForDetails(
+			self,
+			children: typing.List["IAccessible.IAccessible"]
+	) -> typing.Optional["IAccessible.IAccessible"]:
+		for c in children:
+			if c.hasDetails:
+				return c
+		for c in children:
+			withDetails = self._recursiveSearchForDetails(
+				typing.cast(typing.List["IAccessible.IAccessible"], c.children)
+			)
+			if withDetails:
+				return withDetails
+		return None
+
+	def script_reportAnnotationSummary(self, gesture):
+		log.debug("Report annotation summary of the current nav object")
+		from NVDAObjects import IAccessible
+		import typing
+		nav = api.getNavigatorObject()
+		if not isinstance(nav, IAccessible.IAccessible):
+			# Translators: message given when the reportAnnotationSummary script is not available.
+			ui.message(_("Not available here"))
+
+		detailsDescendant = nav if nav.hasDetails else self._recursiveSearchForDetails(
+			typing.cast(typing.List[IAccessible.IAccessible], nav.children)
+		)
+		if not detailsDescendant:
+			# Translators: message given when there is no annotation for the reportAnnotationSummary script.
+			ui.message(_("No annotation here"))
+			return
+
+		obj = typing.cast(IAccessible.IAccessible, detailsDescendant)
+		text = obj.detailsSummary
+		ui.message(text)
+		return
 
 
 	@script(

@@ -45,13 +45,16 @@ class Ia2Web(IAccessible):
 				log.debugWarning(f"Unknown 'description-from' IA2Attribute value: {ia2attrDescriptionFrom}")
 			return controlTypes.DescriptionFrom.UNKNOWN
 
-	def _get_detailsSummary(self) -> str:
-		vbuf = typing.cast(virtualBuffers.gecko_ia2.VirtualBuffer, self.treeInterceptor)
-		if not vbuf:
-			log.debugWarning("unable to get vbuf")
-			return ""
-		controlField = vbuf.getControlFieldForNVDAObject(self)
-		return controlField.get("detailsSummary", "")
+	def _get_detailsSummary(self) -> typing.Optional[str]:
+		if not self.hasDetails:
+			return None
+		detailsRelations = self.detailsRelations
+		if not detailsRelations:
+			log.error("should be able to fetch detailsRelations")
+			return None
+		for target in detailsRelations:
+			# just take the first for now.
+			return target.summarizeInProcess()
 
 	@property
 	def hasDetails(self) -> bool:

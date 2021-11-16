@@ -1519,6 +1519,21 @@ the NVDAObject for IAccessible
 				pass
 		return None
 
+	#: Type definition for auto prop '_get_detailsRelations'
+	detailsRelations: typing.Iterable["IAccessible"]
+
+	def _get_detailsRelations(self) -> typing.Iterable["IAccessible"]:
+		relations = self._getIA2TargetsForRelationsOfType(
+			IAccessibleHandler.RelationType.DETAILS,
+			maxRelations=1
+		)
+		if not relations:
+			return ()
+		relationTarget = IAccessible(
+			IAccessibleObject=IAccessibleHandler.normalizeIAccessible(relations[0]),
+			IAccessibleChildID=0
+		)
+		return (relationTarget, )
 
 	#: Type definition for auto prop '_get_flowsTo'
 	flowsTo: typing.Optional["IAccessible"]
@@ -1726,6 +1741,9 @@ the NVDAObject for IAccessible
 			return False
 
 	def summarizeInProcess(self) -> str:
+		"""Uses nvdaInProcUtils to get the text for an IAccessible.
+		Can be used without a virtual buffer loaded.
+		"""
 		from comtypes import BSTR
 		import ctypes
 		import NVDAHelper
