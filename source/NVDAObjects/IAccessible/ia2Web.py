@@ -55,7 +55,7 @@ class Ia2Web(IAccessible):
 
 	@property
 	def hasDetails(self) -> bool:
-		return bool(self.detailsSummary)
+		return bool(self.IA2Attributes.get("details-roles"))
 
 	def _get_isCurrent(self) -> controlTypes.IsCurrent:
 		ia2attrCurrent: str = self.IA2Attributes.get("current", "false")
